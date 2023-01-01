@@ -1,0 +1,27 @@
+{
+  "name": "dave-gray-mern-stack",
+  "version": "1.0.0",
+  "description": "Tech Notes MERN Project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ComicDansMS/mern-stack-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ComicDansMS/mern-stack-project/issues"
+  },
+  "homepage": "https://github.com/ComicDansMS/mern-stack-project#readme",
+  "dependencies": {
+    "date-fns": "^2.29.3",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20",
+    "uuid": "^9.0.0"
+  }
+}
