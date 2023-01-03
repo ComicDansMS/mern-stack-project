@@ -6,20 +6,20 @@ const bcrypt = require('bcrypt');
 // @desc Get all users
 // @route GET /users
 // @access Private
-const getAllUsers = asyncHandler(async (req, res) => {
+const getAllUsers = asyncHandler( async (req, res) => {
   const users = await User.find().select('-password').lean();
-  if (!users) return res.status(400).json({ message: 'No users found' });
+  if (!users?.length) return res.status(400).json({ message: 'No users found' });
   res.json(users);
 });
 
 // @desc Create new user
 // @route POST /users
 // @access Private
-const createNewUser = asyncHandler(async (req, res) => {
+const createNewUser = asyncHandler( async (req, res) => {
   const { username, password, roles } = req.body;
 
   // Confirm data
-  if (!username || !password || !Array.usArray(roles) || !roles.length) {
+  if (!username || !password || !Array.isArray(roles) || !roles.length) {
     return res.status(400).json({ message: 'All fields are required' });
   };
 
@@ -45,19 +45,16 @@ const createNewUser = asyncHandler(async (req, res) => {
 // @desc Update a user
 // @route PATCH /users
 // @access Private
-const updateUser = asyncHandler(async (req, res) => {
+const updateUser = asyncHandler( async (req, res) => {
   const { id, username, roles, active, password } = req.body;
 
   // Confirm data
-  if (!id || !username || !Array.usArray(roles) || !roles.length || typeof active !== 'boolean') {
-    return res.status(400).json({ message: 'All fields are required' });
+  if (!id || !username || !Array.isArray(roles) || !roles.length || typeof active !== 'boolean') {
+    return res.status(400).json({ message: 'All fields except password are required' });
   }
 
   const user = await User.findById(id).exec();
-
-  if (!user) {
-    return res.status(400).json({ message: 'User not found' });
-  }
+  if (!user) return res.status(400).json({ message: 'User not found' });
 
   // Check for duplicate
   const duplicate = await User.findOne({ username }).lean().exec();
@@ -83,24 +80,15 @@ const updateUser = asyncHandler(async (req, res) => {
 // @desc Delete a user
 // @route DELETE /users
 // @access Private
-const deleteUser = asyncHandler(async (req, res) => {
+const deleteUser = asyncHandler( async (req, res) => {
   const { id } = req.body;
+  if (!id) return res.status(400).json({ message: 'User ID required' });
 
-  if (!id) {
-    return res.status(400).json({ message: 'User ID required' });
-  }
-
-  const notes = await Note.findOne({ user: id }).lean().exec();
-
-  if (notes?.length) {
-    return res.status(400).json({ message: 'User has assigned notes' });
-  }
+  const note = await Note.findOne({ user: id }).lean().exec();
+  if (note) return res.status(400).json({ message: 'User has assigned notes' });
 
   const user = await User.findById(id).exec();
-
-  if (!user) {
-    return res.status(400).json({ message: 'User not found '});
-  } 
+  if (!user) return res.status(400).json({ message: 'User not found' });
   
   const result = await User.deleteOne();
 
